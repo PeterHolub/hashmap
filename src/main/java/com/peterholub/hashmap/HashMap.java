@@ -15,7 +15,7 @@ public class HashMap implements Map {
     private static final byte PRIME_NUMBER = 3;
     private int pairsWritten;
     private int mapSize = INITIAL_CAPACITY;
-    private static Entry[] map = new Entry[INITIAL_CAPACITY];
+    private Entry[] map = new Entry[INITIAL_CAPACITY];
 
     /**
      * Method for put key and value into the map
@@ -26,6 +26,7 @@ public class HashMap implements Map {
     @Override
     public void put(int key, long value) {
         Entry entry = new Entry(key, value);
+        //Always check if first index available  to write Entry
         if (map[FIRST_INDEX] == null) {
             map[FIRST_INDEX] = entry;
             pairsWritten++;
@@ -33,15 +34,17 @@ public class HashMap implements Map {
         }
         int probe = 0;
         int hashKey = (firstHash(key) + probe * secondHash(key)) % mapSize;
-
+        //Looping till first free index will be found
         while (map[hashKey] != null && probe <= mapSize) {
             probe++;
             hashKey = (firstHash(key) + probe * secondHash(key)) % mapSize;
         }
         map[hashKey] = entry;
 
+        //Increment counter after Entry written
         pairsWritten++;
 
+        //Invoke method for checking load factor and resize map if load factor more than 0.75
         resizeMap();
     }
 
@@ -54,7 +57,7 @@ public class HashMap implements Map {
     public long get(int key) {
         int probe = 0;
         int hashKey = (firstHash(key) + probe * secondHash(key)) % mapSize;
-
+        //Looping till index will be not null and key value in Entry will be the same as passed parameter, or iteration thru all map will finished
         for (int i = 0; i <= mapSize; i++) {
             Entry entry = map[hashKey];
             if (entry != null) {
@@ -65,6 +68,7 @@ public class HashMap implements Map {
             probe++;
             hashKey = (firstHash(key) + probe * secondHash(key)) % mapSize;
         }
+        //Return 0 if there is no key in map
         return 0;
     }
 
@@ -106,24 +110,4 @@ public class HashMap implements Map {
     }
 }
 
-/**
- * Class - representation of entry in Hash Map with getters and constructor
- **/
-class Entry {
-    private final int key;
-    private long value;
 
-    Entry(int key, long value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    int getKey() {
-        return key;
-    }
-
-    long getValue() {
-        return value;
-    }
-
-}
